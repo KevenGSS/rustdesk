@@ -8,7 +8,6 @@ import 'package:flutter_hbb/models/platform_model.dart';
 import 'package:flutter_hbb/models/state_model.dart';
 import 'package:get/get.dart';
 import 'package:window_manager/window_manager.dart';
-// import 'package:flutter/services.dart';
 
 import '../../common/shared_state.dart';
 
@@ -66,53 +65,26 @@ class _DesktopTabPageState extends State<DesktopTabPage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    // HardwareKeyboard.instance.addHandler(_handleKeyEvent);
-  }
-
-  /*
-  bool _handleKeyEvent(KeyEvent event) {
-    if (!mouseIn && event is KeyDownEvent) {
-      print('key down: ${event.logicalKey}');
-      shouldBeBlocked(_block, canBeBlocked);
-    }
-    return false; // allow it to propagate
-  }
-  */
-
-  @override
   void dispose() {
-    // HardwareKeyboard.instance.removeHandler(_handleKeyEvent);
     Get.delete<DesktopTabController>();
-
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final tabWidget = Container(
-        child: Scaffold(
-            backgroundColor: Theme.of(context).colorScheme.background,
-            body: DesktopTab(
-              controller: tabController,
-              tail: Offstage(
-                offstage: bind.isIncomingOnly() || bind.isDisableSettings(),
-                child: ActionIcon(
-                  message: 'Settings',
-                  icon: IconFont.menu,
-                  onTap: DesktopTabPage.onAddSetting,
-                  isClose: false,
-                ),
-              ),
-            )));
+    final homeWidget = Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
+      body: const DesktopHomePage(
+        key: ValueKey(kTabLabelHomePage),
+      ),
+    );
     return isMacOS || kUseCompatibleUiMode
-        ? tabWidget
+        ? homeWidget
         : Obx(
             () => DragToResizeArea(
               resizeEdgeSize: stateGlobal.resizeEdgeSize.value,
               enableResizeEdges: windowManagerEnableResizeEdges,
-              child: tabWidget,
+              child: homeWidget,
             ),
           );
   }
