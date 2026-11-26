@@ -129,10 +129,7 @@ class _OnlineStatusWidgetState extends State<OnlineStatusWidget> {
               width: isIncomingOnly ? 226 : null,
               child: _buildConnStatusMsg(),
             ),
-            // stop
             if (!isIncomingOnly) startServiceWidget(),
-            // ready && public
-            // No need to show the guide if is custom client.
             if (!isIncomingOnly) setupServerWidget(),
           ],
         );
@@ -211,7 +208,6 @@ class _ConnectionPageState extends State<ConnectionPage>
 
   final AllPeersLoader _allPeersLoader = AllPeersLoader();
 
-  // https://github.com/flutter/flutter/issues/157244
   Iterable<Peer> _autocompleteOpts = [];
 
   final _menuOpen = false.obs;
@@ -260,7 +256,6 @@ class _ConnectionPageState extends State<ConnectionPage>
       isWindowMinimized = true;
     } else if (eventName == 'maximize' || eventName == 'restore') {
       if (isWindowMinimized && isWindows) {
-        // windows can't update when minimized.
         Get.forceAppUpdate();
       }
       isWindowMinimized = false;
@@ -269,13 +264,11 @@ class _ConnectionPageState extends State<ConnectionPage>
 
   @override
   void onWindowEnterFullScreen() {
-    // Remove edge border by setting the value to zero.
     stateGlobal.resizeEdgeSize.value = 0;
   }
 
   @override
   void onWindowLeaveFullScreen() {
-    // Restore edge border to default edge size.
     stateGlobal.resizeEdgeSize.value = stateGlobal.isMaximized.isTrue
         ? kMaximizeEdgeSize
         : windowResizeEdgeSize;
@@ -295,7 +288,6 @@ class _ConnectionPageState extends State<ConnectionPage>
       }
 
       final textLength = _idEditingController.value.text.length;
-      // Select all to facilitate removing text, just following the behavior of address input of chrome.
       _idEditingController.selection =
           TextSelection(baseOffset: 0, extentOffset: textLength);
     }
@@ -303,6 +295,11 @@ class _ConnectionPageState extends State<ConnectionPage>
 
   @override
   Widget build(BuildContext context) {
+    // Oculta o painel de conexão remota ("Enter Remote ID", botão Connect e lista de dispositivos)
+    // mantendo a estrutura da classe intacta para evitar erros de compilação.
+    return const SizedBox.shrink();
+
+    /* CÓDIGO ORIGINAL COMENTADO:
     final isOutgoingOnly = bind.isOutgoingOnly();
     return Column(
       children: [
@@ -323,6 +320,7 @@ class _ConnectionPageState extends State<ConnectionPage>
         if (!isOutgoingOnly) OnlineStatusWidget()
       ],
     );
+    */
   }
 
   /// Callback for the connect button.
@@ -570,9 +568,6 @@ class _ConnectionPageState extends State<ConnectionPage>
                                       '${translate('Terminal')} (beta)',
                                       () => onConnect(isTerminal: true)
                                     ),
-                                    // `connect` routes this through the
-                                    // desktop path only; the peer card gates
-                                    // it the same way.
                                     if (isDesktop)
                                       (
                                         'TCP tunneling',
